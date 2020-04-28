@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useState, useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { SearchState} from './search';
-import { searchGifs, searchGifsForward, searchGifsBackward } from './giphy';
+import { searchGifs, searchGifsForward, searchGifsBackward, searchGifsPage } from './giphy';
 import { PagerView, GifView } from './components'
 
 interface SearchFormState {
@@ -19,11 +19,17 @@ export const SearchView = () => {
   const [formState, setFormState] = useState({
     searchTerm: ''
   })
+
   const onForward = useCallback(() => {
     dispatch(searchGifsForward(formState.searchTerm))
   }, [dispatch, formState.searchTerm])
+
   const onBackward = useCallback(() => {
     dispatch(searchGifsBackward(formState.searchTerm))
+  }, [dispatch, formState.searchTerm])
+
+  const goToPage = useCallback(page => {
+    dispatch(searchGifsPage(page, formState.searchTerm))
   }, [dispatch, formState.searchTerm])
 
   return (
@@ -37,6 +43,7 @@ export const SearchView = () => {
         search.data.length > 0 && 
         <PagerView 
           pagination={search.pagination} 
+          goToPage={goToPage}
           onForward={onForward} 
           onBackward={onBackward}/> 
       }
@@ -71,8 +78,10 @@ export const SearchFormView: React.FunctionComponent<{
     onSubmit(formState)
   }, [onSubmit, formState])
 
-  return (<form>
+  return (
+    <form onSubmit={onFormSubmit}>
       <input type='text' value={formState.searchTerm} onChange={onChange('searchTerm')}/>
-      <button onClick={onFormSubmit}>Search</button>
-    </form>)
+      <button type="submit">Search</button>
+    </form>
+  )
 }

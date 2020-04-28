@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect, useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { trendingGifsForward, trendingGifsBackward, trendingGifs } from './giphy';
+import { trendingGifsForward, trendingGifsBackward, trendingGifs, trendingGifsPage } from './giphy';
 import { TrendingState } from './trending';
 import { PagerView, GifView } from './components'
 
@@ -21,6 +21,10 @@ export const TrendingView = () => {
     dispatch(trendingGifsBackward())
   }, [dispatch])
 
+  const goToPage = useCallback((page) => {
+    dispatch(trendingGifsPage(page))
+  }, [dispatch])
+
   return (
     <div>
       <h1>Trending</h1>
@@ -28,6 +32,7 @@ export const TrendingView = () => {
         trending.data.length > 0 && 
         <PagerView 
           pagination={trending.pagination} 
+          goToPage={goToPage}
           onForward={onForward} 
           onBackward={onBackward}/> 
       }
